@@ -1,5 +1,34 @@
 import arcade
 import  time as t
+import random as r
+
+def easy_gamemode(field):
+    ra = r.randint(0,9)
+    za = ra%3
+    zb = int(ra/3)
+    print(str(zb) + "T"+ str(za))
+    j = field[zb][za]
+    if j.owner == None:
+        j.texture = arcade.load_texture("data/o.png")
+        j.owner = "o"
+        return field
+    else:
+        return easy_gamemode(field)
+def medium_gamemode(field):
+    for i in field:
+        for j in i:
+            if field[i][j].owner == "o":
+                co1 = r.choice((i,0),(i,1),(i,2),(0,j),(1,j),(2,j))
+                zb, za = co1
+                j = field[zb][za]
+                if j.owner == None:
+                    j.texture = arcade.load_texture("data/o.png")
+                    j.owner = "o"
+                    return field
+                else:
+                    return medium_gamemode(field)
+
+
 def check_for_victory(gitter):
     for i in gitter:
         if i[0].owner == i[1].owner and i[1].owner == i[2].owner and i[2].owner != None:
@@ -28,6 +57,7 @@ class Game(arcade.View):
         self.players= ["x","o"]
         self.activeplayer = self.players[0]
         self.gitter = [[None, None, None],[None, None, None],[None, None, None]]
+        self.bot = bot
         for i in range(3):
             for j in range(3):
                 self.gitter[i][j] = Field(position=(i+1, j+1))
@@ -62,6 +92,27 @@ class Game(arcade.View):
                             self.end(l)
                         elif check_if_full(self.gitter):
                             self.end(("Nobody", "#FFFFFF"))
+                        else:
+                            if self.bot != "d":
+                                if self.bot == "a":
+                                    self.gitter = easy_gamemode(self.gitter)
+                                elif self.bot == "b":
+                                    self.gitter = medium_gamemode(self.gitter)
+                                a = self.players[0]
+                                self.players.pop(0)
+                                self.players.append(a)
+                                self.activeplayer = self.players[0]
+                                if check_for_victory(self.gitter):
+                                    if self.players[0] == "o":
+                                        l = ("Blue", "#00FFFF")
+                                    elif self.players[0] == "x":
+                                        l = ("Pink","#E80EFF")
+                                    self.on_draw()
+                                    self.end(l)
+                                elif check_if_full(self.gitter):
+                                    self.end(("Nobody", "#FFFFFF"))
+
+
                         
         return super().on_mouse_press(x, y, button, modifiers)
 
@@ -102,17 +153,17 @@ class Home(arcade.View):
         arcade.set_background_color(arcade.color.BLACK)
     def on_draw(self):
         self.clear()
-        arcade.draw_line(0, 300, 600, 300, arcade.color_from_hex_string("#00ffff"))
-        arcade.draw_line(300, 0, 300, 900, arcade.color_from_hex_string("#00ffff"))
+        arcade.draw_line(0, 300, 600, 300, arcade.color_from_hex_string("#00ff00"), 4)
+        arcade.draw_line(300, 0, 300, 900, arcade.color_from_hex_string("#00ff00"), 4)
     def on_mouse_release(self, x: int, y: int, button: int, modifiers: int):
-        if x < 300 and y < 300:
-            game = Game("")
-        elif x < 300 and y > 300:
-            game = Game("")
-        elif x > 300 and y < 300:
-            game = Game("")
+        if x < 300 and y > 300:
+            game = Game("a")
         elif x > 300 and y > 300:
-            game = Game("")
+            game = Game("b")
+        elif x < 300 and y < 300:
+            game = Game("c")
+        elif x > 300 and y < 300:
+            game = Game("d")
         self.window.show_view(game)
         
 
