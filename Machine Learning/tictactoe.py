@@ -79,12 +79,23 @@ class Game(arcade.View):
         self.activeplayer = self.players[0]
         self.gitter = [[None, None, None],[None, None, None],[None, None, None]]
         self.bot = bot
+        self.cursor_sprite = None
         for i in range(3):
             for j in range(3):
                 self.gitter[i][j] = Field(position=(i+1, j+1))
-    
+    def setup(self):
+        self.set_mouse_visible(False)
+        self.cursor_sprite = arcade.Sprite("images/cursor1.png")
+        self.cursor_sprite.center_x = 50
+        self.cursor_sprite.center_y = 50
+
+    def on_mouse_motion(self, x, y, dx, dy):
+        self.cursor_sprite.center_x = x
+        self.cursor_sprite.center_y = y
+
     def on_draw(self):
         self.clear()
+        self.cursor_sprite.draw()
         for i in range(3):
             for j in range(3):
                 self.gitter[i][j].draw()
