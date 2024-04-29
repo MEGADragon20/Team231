@@ -2,6 +2,8 @@ import arcade
 import  time as t
 import random as r
 
+import arcade.key
+
 def easy_gamemode(field):
     ra = r.randint(0,9)
     za = ra%3 - 1
@@ -79,22 +81,15 @@ class Game(arcade.View):
         self.activeplayer = self.players[0]
         self.gitter = [[None, None, None],[None, None, None],[None, None, None]]
         self.bot = bot
-        self.cursor_sprite = arcade.Sprite("images/cursor1.png")
-        self.cursor_sprite.center_x = 50
-        self.cursor_sprite.center_y = 50
         for i in range(3):
             for j in range(3):
                 self.gitter[i][j] = Field(position=(i+1, j+1))
-    def setup(self):
-        self.set_mouse_visible(False)
 
-    def on_mouse_motion(self, x, y, dx, dy):
-        self.cursor_sprite.center_x = x
-        self.cursor_sprite.center_y = y
+    
 
     def on_draw(self):
         self.clear()
-        self.cursor_sprite.draw()
+        self.window.cursor_sprite.texture = arcade.load_texture("data/cursor"+ self.players[0]+ ".png")
         for i in range(3):
             for j in range(3):
                 self.gitter[i][j].draw()
@@ -118,7 +113,7 @@ class Game(arcade.View):
                             if self.players[0] == "o":
                                 l = ("Blue", "#00FFFF")
                             elif self.players[0] == "x":
-                                l = ("Pink","#E80EFF")
+                                l = ("Pink","#FF00FF")
                             self.on_draw()
                             self.end(l)
                         elif check_if_full(self.gitter):
@@ -147,6 +142,7 @@ class Game(arcade.View):
                         
         return super().on_mouse_press(x, y, button, modifiers)
 
+        
     def end(self, l):
         game_view = Victory(l)
         t.sleep(0.1)
@@ -196,13 +192,27 @@ class Home(arcade.View):
         elif x > 300 and y < 300:
             game = Game("d")
         self.window.show_view(game)
-        
+    
 
 class W(arcade.Window):
     def __init__(self):
         super().__init__(width=600, height=600, title="TicTacToe")
+        self.set_mouse_visible(False)
+        self.cursor_sprite = arcade.Sprite("data/cursor1.png")
+        self.cursor_sprite.center_x = 50
+        self.cursor_sprite.center_y = 50
         startscreen = Home()
         self.show_view(startscreen)
+    def on_key_press(self, symbol: int, modifiers: int):
+        if symbol == arcade.key.ESCAPE:
+            self.close()
+    def on_mouse_motion(self, x, y, dx, dy):
+        self.cursor_sprite.center_x = x
+        self.cursor_sprite.center_y = y
+        print(str(x) + " | "+ str(y))
+
+    def on_draw(self):
+        self.cursor_sprite.draw(pixelated = True)
 
 
 game = W()
