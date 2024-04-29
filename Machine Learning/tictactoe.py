@@ -197,6 +197,9 @@ class Home(arcade.View):
         self.arrow.center_y = 300
         self.standsprlist.append(self.arrow)
 
+        self.background_music = arcade.load_sound("data/DigBarGayRaps-4-BIG-GUYS.wav")
+        arcade.play_sound(self.background_music)
+
         self.robotsprlist = arcade.SpriteList()
 
     def on_show(self):
@@ -211,14 +214,7 @@ class Home(arcade.View):
         self.robot.center_y = 300
         self.robotsprlist.append(self.robot)
 
-        if self.mode % 4 == 0:
-            arcade.set_background_color(arcade.color.LIGHT_GRAY)
-        if self.mode % 4 == 1:
-            arcade.set_background_color(arcade.color.NEON_GREEN)
-        if self.mode % 4 == 2:
-            arcade.set_background_color(arcade.color.NEON_CARROT)
-        if self.mode % 4 == 3:
-            arcade.set_background_color(arcade.color.NEON_FUCHSIA)
+        arcade.set_background_color(arcade.color_from_hex_string("#303030"))
 
         self.robotsprlist.draw(pixelated=True)
         self.standsprlist.draw(pixelated=True)
