@@ -205,20 +205,20 @@ class Home(arcade.View):
 
     def on_draw(self):
         self.clear()
-
+        self.robotsprlist.clear()
         self.robot = arcade.Sprite("data/Robot" + str(self.mode % 4) + ".png" , 10)
         self.robot.center_x = 300
         self.robot.center_y = 300
         self.robotsprlist.append(self.robot)
 
         if self.mode % 4 == 0:
-            arcade.set_background_color(arcade.color.PASTEL_GRAY)
+            arcade.set_background_color(arcade.color.LIGHT_GRAY)
         if self.mode % 4 == 1:
-            arcade.set_background_color(arcade.color.PASTEL_GREEN)
+            arcade.set_background_color(arcade.color.NEON_GREEN)
         if self.mode % 4 == 2:
-            arcade.set_background_color(arcade.color.PASTEL_YELLOW)
+            arcade.set_background_color(arcade.color.NEON_CARROT)
         if self.mode % 4 == 3:
-            arcade.set_background_color(arcade.color.PASTEL_RED)
+            arcade.set_background_color(arcade.color.NEON_FUCHSIA)
 
         self.robotsprlist.draw(pixelated=True)
         self.standsprlist.draw(pixelated=True)
