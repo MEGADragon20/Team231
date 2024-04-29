@@ -2,6 +2,9 @@ import arcade
 import  time as t
 import random as r
 
+import arcade.color
+import arcade.color
+
 def easy_gamemode(field):
     ra = r.randint(0,9)
     za = ra%3 - 1
@@ -177,24 +180,65 @@ class Victory(arcade.View):
             game = Home()
             self.window.show_view(game)
         return super().on_mouse_press(x, y, button, modifiers)
+
+
+
 class Home(arcade.View):
     def __init__(self):
         super().__init__()
+        self.mode = 0
+        self.standsprlist = arcade.SpriteList()
+        self.arrow = arcade.Sprite("data/ArrowL.png", 4)
+        self.arrow.center_x = 550
+        self.arrow.center_y = 300
+        self.standsprlist.append(self.arrow)
+        self.arrow = arcade.Sprite("data/ArrowR.png", 4)
+        self.arrow.center_x = 50
+        self.arrow.center_y = 300
+        self.standsprlist.append(self.arrow)
+
+        self.robotsprlist = arcade.SpriteList()
+
     def on_show(self):
         arcade.set_background_color(arcade.color.BLACK)
+
+
     def on_draw(self):
         self.clear()
-        arcade.draw_line(0, 300, 600, 300, arcade.color_from_hex_string("#00ff00"), 4)
-        arcade.draw_line(300, 0, 300, 900, arcade.color_from_hex_string("#00ff00"), 4)
+
+        self.robot = arcade.Sprite("data/Robot" + str(self.mode % 4) + ".png" , 10)
+        self.robot.center_x = 300
+        self.robot.center_y = 300
+        self.robotsprlist.append(self.robot)
+
+        if self.mode % 4 == 0:
+            arcade.set_background_color(arcade.color.PASTEL_GRAY)
+        if self.mode % 4 == 1:
+            arcade.set_background_color(arcade.color.PASTEL_GREEN)
+        if self.mode % 4 == 2:
+            arcade.set_background_color(arcade.color.PASTEL_YELLOW)
+        if self.mode % 4 == 3:
+            arcade.set_background_color(arcade.color.PASTEL_RED)
+
+        self.robotsprlist.draw(pixelated=True)
+        self.standsprlist.draw(pixelated=True)
+
+
     def on_mouse_release(self, x: int, y: int, button: int, modifiers: int):
-        if x < 300 and y > 300:
-            game = Game("a")
-        elif x > 300 and y > 300:
-            game = Game("b")
-        elif x < 300 and y < 300:
-            game = Game("c")
-        elif x > 300 and y < 300:
-            game = Game("d")
+        if x < 600 and y > 200 and x > 500 and y < 400:
+            self.mode += 1
+        elif x < 100 and y > 200 and x > 0 and y < 400:
+            self.mode -= 1
+        elif x > 150 and x < 450:
+            if self.mode == 0:
+                game = Game("d")
+            elif self.mode == 1:
+                game = Game("a")
+            elif self.mode == 2:
+                game = Game("b")
+            else:
+                game = Game("c")
+
         self.window.show_view(game)
         
 
