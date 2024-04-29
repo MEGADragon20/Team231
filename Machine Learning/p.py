@@ -1,1 +1,2 @@
-print(int(7/3))
+if 1 == 1 == 2-1:
+    print("True")

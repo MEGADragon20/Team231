@@ -4,9 +4,8 @@ import random as r
 
 def easy_gamemode(field):
     ra = r.randint(0,9)
-    za = ra%3
-    zb = int(ra/3)
-    print(str(zb) + "T"+ str(za))
+    za = ra%3 - 1
+    zb = int(ra/3) - 1 
     j = field[zb][za]
     if j.owner == None:
         j.texture = arcade.load_texture("data/o.png")
@@ -15,20 +14,44 @@ def easy_gamemode(field):
     else:
         return easy_gamemode(field)
 def medium_gamemode(field):
-    for i in field:
-        for j in i:
-            if field[i][j].owner == "o":
-                co1 = r.choice((i,0),(i,1),(i,2),(0,j),(1,j),(2,j))
-                zb, za = co1
-                j = field[zb][za]
-                if j.owner == None:
-                    j.texture = arcade.load_texture("data/o.png")
-                    j.owner = "o"
-                    return field
-                else:
-                    return medium_gamemode(field)
+    j = ""
+    for b in range(3):
+        a = b-1
+        if field[0][a].owner == field[1][a].owner != None and field[2][a].owner == None:
+            j = field[2][a]
+        elif field[0][a].owner == field[2][a].owner != None and field[1][a].owner == None:
+            j = field[1][a]
+        elif field[1][a].owner == field[2][a].owner != None and field[0][a].owner == None:
+            j = field[0][a]
+        elif field[a][0].owner == field[a][1].owner != None and field[a][2].owner == None:
+            j = field[a][2]
+        elif field[a][0].owner == field[a][2].owner != None and field[a][1].owner == None:
+            j = field[a][1]
+        elif field[a][1].owner == field[a][2].owner != None and field[a][0].owner == None:
+            j = field[a][0]
+    if j == "":
+        if field[0][0].owner == field[1][1].owner != None and field[2][2].owner == None:
+            j = field[2][2]
+        elif field[0][0].owner == field[2][2].owner != None and field[1][1].owner == None:
+            j = field[1][1]
+        elif field[2][2].owner == field[1][1].owner != None and field[0][0].owner == None:
+            j = field[0][0]
 
-
+        elif field[2][0].owner == field[1][1].owner != None and field[0][2].owner == None:
+            j = field[0][2]
+        elif field[0][2].owner == field[1][1].owner != None and field[2][0].owner == None:
+            j = field[2][0]
+        elif field[2][0].owner == field[0][2].owner != None and field[1][1].owner == None:
+            j = field[1][1]
+    if j != "":
+        j.texture = arcade.load_texture("data/o.png")
+        j.owner = "o"
+        print("e")
+        return field
+    else:
+        print("s")
+        return easy_gamemode(field)
+        
 def check_for_victory(gitter):
     for i in gitter:
         if i[0].owner == i[1].owner and i[1].owner == i[2].owner and i[2].owner != None:
@@ -36,11 +59,9 @@ def check_for_victory(gitter):
     for i in range(3):
         if gitter[0][i].owner == gitter[1][i].owner and gitter[1][i].owner == gitter[2][i].owner and gitter[2][i].owner != None:
                 return True
-    if gitter[0][0].owner == gitter[1][1].owner and gitter[1][1] == gitter[2][2].owner and gitter[2][2].owner != None:
-        print(gitter[0][0].owner)
+    if gitter[0][0].owner == gitter[1][1].owner and gitter[1][1].owner == gitter[2][2].owner and gitter[2][2].owner != None:
         return True
-    if gitter[0][2].owner == gitter[1][1].owner and gitter[1][1] == gitter[2][0].owner and gitter[2][0].owner != None:
-        print(gitter[0][2].owner)
+    if gitter[0][2].owner == gitter[1][1].owner and gitter[1][1].owner == gitter[2][0].owner and gitter[2][0].owner != None:
         return True
     return False
 
