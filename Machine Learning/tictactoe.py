@@ -82,7 +82,7 @@ class Game(arcade.View):
         self.activeplayer = self.players[0]
         self.gitter = [[None, None, None],[None, None, None],[None, None, None]]
         self.bot = bot
-        self.cursor_sprite = arcade.Sprite("images/cursor1.png")
+        self.cursor_sprite = arcade.Sprite("data/cursor1.png")
         self.cursor_sprite.center_x = 50
         self.cursor_sprite.center_y = 50
         for i in range(3):
