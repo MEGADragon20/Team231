@@ -1,21 +1,21 @@
 def is_bigger_as(rom1 = str, rom2 = str) -> bool:
     both = [rom1, rom2]
-    for i in both:
-        if i == "I":
-            i = 1
-        elif i == "V":
-            i = 2
-        elif i == "X":
-            i = 3
-        elif i == "L":
-            i = 4
-        elif i == "C":
-            i = 5
+    for i in range(len(both)):
+        if both[i] == "I":
+            both[i] = 1
+        elif both[i] == "V":
+            both[i] = 2
+        elif both[i] == "X":
+            both[i] = 3
+        elif both[i] == "L":
+            both[i] = 4
+        elif both[i] == "C":
+            both[i] = 5
         elif i == "D":
-            i = 6
+            both[i] = 6
         elif i == "M":
-            i = 7
-    if rom1 > rom2:
+            both[i] = 7
+    if both[0] > both[1]:
         return True
     else:
         return False
@@ -104,4 +104,4 @@ def roman_to_int(rom = str) -> int:
             print("n")
 
     return sum
-print(roman_to_int("XC"))
+print(roman_to_int("MMXCVII"))
