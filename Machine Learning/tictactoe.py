@@ -235,7 +235,7 @@ class Home(arcade.View):
             else:
                 game = Game("c")
 
-        self.window.show_view(game)
+            self.window.show_view(game)
         
 
 class W(arcade.Window):
