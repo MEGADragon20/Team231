@@ -271,6 +271,10 @@ class Home(arcade.View):
         self.arrow.center_x = 50
         self.arrow.center_y = 300
         self.standsprlist.append(self.arrow)
+        self.settings = arcade.Sprite("data/Settings.png", 2)
+        self.settings.center_x = 550
+        self.settings.center_y = 550
+        self.standsprlist.append(self.settings)
 
         self.background_music = arcade.load_sound("data/DigBarGayRaps-4-BIG-GUYS.wav")
         arcade.play_sound(self.background_music)
@@ -311,13 +315,61 @@ class Home(arcade.View):
                 game = Game("c")
 
             self.window.show_view(game)
+        elif x > 450 and y > 450:
+            settings = Settings()
+            self.window.show_view(settings)
         
+class Settings(arcade.View):
+    def __init__(self):
+        super().__init__()
+        self.music = 0 
+        self.choosen_music = 0
+        self.standardsprlist = arcade.SpriteList()
+        self.arrow = arcade.Sprite("data/ArrowL.png", 2)
+        self.arrow.center_x = 550
+        self.arrow.center_y = 400
+        self.standardsprlist.append(self.arrow)
+        self.arrow = arcade.Sprite("data/ArrowR.png", 2)
+        self.arrow.center_x = 50
+        self.arrow.center_y = 400
+        self.standardsprlist.append(self.arrow)
+        self.settings = arcade.Sprite("data/Settings.png", 2)
+        self.settings.center_x = 550
+        self.settings.center_y = 550
+        self.standardsprlist.append(self.settings)
+
+    def on_draw(self):
+        self.clear()
+        arcade.set_background_color(arcade.color_from_hex_string("#303030"))
+
+        self.standardsprlist.draw(pixelated=True)
+        arcade.draw_text("Musik", 0, 380, arcade.color_from_hex_string("000000"), 12, 600, "center")
+        if self.choosen_music % 4 == 0:
+            arcade.draw_text("Gayyy", 0, 380, arcade.color_from_hex_string("000000"), 12, 600, "center")
+        elif self.choosen_music % 4 == 1:
+            arcade.draw_text("Action", 0, 380, arcade.color_from_hex_string("000000"), 12, 600, "center")
+        elif self.choosen_music % 4 == 2:
+            arcade.draw_text("Chill", 0, 380, arcade.color_from_hex_string("000000"), 12, 600, "center") 
+        elif self.choosen_music % 4 == 3:
+            arcade.draw_text("M&Ms", 0, 380, arcade.color_from_hex_string("000000"), 12, 600, "center")  
+
+    def on_mouse_release(self, x: int, y: int, button: int, modifiers: int):
+        if x < 600 and y > 200 and x > 500 and y < 400:
+            self.choosen_music += 1
+        elif x < 100 and y > 200 and x > 0 and y < 400:
+            self.choosen_music -= 1
+        if x > 450 and y > 450:
+            settings = Home()
+            self.window.show_view(settings)
+
+
 
 class W(arcade.Window):
     def __init__(self):
         super().__init__(width=600, height=600, title="TicTacToe")
         startscreen = Home()
         self.show_view(startscreen)
+        self.music = 0
 
 
 game = W()
