@@ -49,12 +49,14 @@ def medium_gamemode(field):
     if j != "":
         j.texture = arcade.load_texture("data/o.png")
         j.owner = "o"
-        print("e")
         return field
     else:
-        print("s")
         return easy_gamemode(field)
-        
+
+def hard_gamemode(field):
+    
+    return field
+
 def check_for_victory(gitter):
     for i in gitter:
         if i[0].owner == i[1].owner and i[1].owner == i[2].owner and i[2].owner != None:
