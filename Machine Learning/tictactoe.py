@@ -5,6 +5,68 @@ import random as r
 import arcade.color
 import arcade.color
 
+def evaluate_move(field, coordinates):
+    def is_winner(field, player):
+        # Check rows, columns, and diagonals for a win
+        for i in range(3):
+            if all(field[i][j] == player for j in range(3)):  # Check row
+                return True
+            if all(field[j][i] == player for j in range(3)):  # Check column
+                return True
+        if all(field[i][i] == player for i in range(3)) or all(field[i][2 - i] == player for i in range(3)):  # Check diagonals
+            return True
+        return False
+
+    def minimax(field, depth, maximizing_player):
+        # Base cases: check if the game is over or if reached maximum depth
+        if check_for_victory(field) and ev_sum(sum(field)):
+            return -1
+        if is_winner(field, "o"):
+            return 1
+        if depth == 0:              
+            return 0
+
+        # If it's the maximizing player's turn (o), try to maximize the score
+        if maximizing_player:
+            max_eval = float('-inf')
+            for i in range(3):
+                for j in range(3):
+                    if field[i][j] == " ":
+                        field[i][j] = "o"
+                        eval = minimax(field, depth - 1, False)
+                        field[i][j] = " "  # Undo move
+                        max_eval = max(max_eval, eval)
+            return max_eval
+        # If it's the minimizing player's turn (x), try to minimize the score
+        else:
+            min_eval = float('inf')
+            for i in range(3):
+                for j in range(3):
+                    if field[i][j] == " ":
+                        field[i][j] = "x"
+                        eval = minimax(field, depth - 1, True)
+                        field[i][j] = " "  # Undo move
+                        min_eval = min(min_eval, eval)
+            return min_eval
+
+    # Check if the given coordinates are valid
+    if 0 <= coordinates[0] < 3 and 0 <= coordinates[1] < 3 and field[coordinates[0]][coordinates[1]] == " ":
+        field[coordinates[0]][coordinates[1]] = "o"  # Assume o is making the move
+        move_evaluation = minimax(field, 2, False)  # Evaluate the move
+        field[coordinates[0]][coordinates[1]] = " "  # Undo the move
+        if move_evaluation > 0:
+            return 1  # Good move
+        elif move_evaluation < 0:
+            return -1  # Bad move
+        else:
+            return 0  # Neutral move
+    else:
+        return 0  # Neutral move due to invalid coordinates
+
+print(evaluate_move([["x","",""],["o","o", ""],["x", "x", "o"]], (1,2)))
+def bestfield(field, player):
+    pass
+
 def easy_gamemode(field):
     ra = r.randint(0,9)
     za = ra%3 - 1
@@ -54,7 +116,9 @@ def medium_gamemode(field):
         return easy_gamemode(field)
 
 def hard_gamemode(field):
-    
+    j = bestfield(field, "o")
+    j.texture = arcade.load_texture("data/o.png")
+    j.owner = "o"
     return field
 
 def check_for_victory(gitter):
@@ -69,7 +133,16 @@ def check_for_victory(gitter):
     if gitter[0][2].owner == gitter[1][1].owner and gitter[1][1].owner == gitter[2][0].owner and gitter[2][0].owner != None:
         return True
     return False
+def sum(gitter):
+    s = 0
+    for i in gitter:
+        for j in i:
+            if j.owner != None:
+                s += 1
+    return s
 
+def ev_sum(p):
+    return "o" if p%2 == 0 else "x"
 def check_if_full(gitter):
     for i in range(3):
         for j in range(3):
