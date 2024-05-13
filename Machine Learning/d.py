@@ -16,3 +16,12 @@ def give_longest_str_in_str_without_repeating_char(text: str):
     return max_substr
 
 print(give_longest_str_in_str_without_repeating_char("abcdefgahjajajjhaha"))  # Output: "abcdefg"
+
+# Auf den 13.05.2024 als Hausaufgabe:
+
+
+# Schreibe eine Funktion substring_suche_2(string1: str, string2: str) -> str, die den längsten gemeinsamen Substring der beiden übergebenen Strings sucht und zurückgibt.
+# Schreibe die Funktion so effizient wie möglich.
+# Beispiel: substring_suche_2("adler", "lernen") == "ler"
+
+# TODO
