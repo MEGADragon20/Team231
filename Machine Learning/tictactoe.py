@@ -54,7 +54,19 @@ def medium_gamemode(field):
         return easy_gamemode(field)
 
 def hard_gamemode(field):
-    
+    def availableMoves(field):
+        dahfgjhsdfg = []
+        for i in range(3):
+            for j in range(3):
+                if field[i][j] == None:
+                    dahfgjhsdfg.append(field[i][j])
+        return dahfgjhsdfg
+
+
+
+
+
+
 def check_for_victory(gitter):
     for i in gitter:
         if i[0].owner == i[1].owner and i[1].owner == i[2].owner and i[2].owner != None:
@@ -67,6 +79,7 @@ def check_for_victory(gitter):
     if gitter[0][2].owner == gitter[1][1].owner and gitter[1][1].owner == gitter[2][0].owner and gitter[2][0].owner != None:
         return True
     return False
+
 def sum(gitter):
     s = 0
     for i in gitter:
