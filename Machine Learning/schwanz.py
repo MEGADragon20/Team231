@@ -1,3 +1,24 @@
+def minimax(board, depth, maxen):
+    if gameOver(board):
+        return evaluateBoard(board)
+
+    if maxen == True:
+        bScore = -9999999999999999999999
+        for i in availableMoves(board):
+            make_move(board, "x" , i)
+            score = minimax(board, depth+1, False)
+            undo_move(board, i)
+            best_score = max(score, bScore)
+        return best_score
+    else:
+        bScore = 9999999999999999999999
+        for i in availableMoves(board):
+            make_move(board, "o" , i)
+            score = minimax(board, depth+1, True)
+            undo_move(board, i)
+            best_score = min(score, bScore)
+        return best_score
+
 def availableMoves(field):
         dahfgjhsdfg = []
         for i in range(3):
@@ -28,4 +49,19 @@ def evaluateBoard(field):
     
 def make_move(field, owner, move):
     field[move[0]][move[1]].owner = owner
-    
+
+def undo_move(field,move):
+    field[move[0]][move[1]].owner = None
+
+def gameOver(gitter):
+    for i in gitter:
+        if i[0].owner == i[1].owner and i[1].owner == i[2].owner and i[2].owner != None:
+            return True
+    for i in range(3):
+        if gitter[0][i].owner == gitter[1][i].owner and gitter[1][i].owner == gitter[2][i].owner and gitter[2][i].owner != None:
+                return True
+    if gitter[0][0].owner == gitter[1][1].owner and gitter[1][1].owner == gitter[2][2].owner and gitter[2][2].owner != None:
+        return True
+    if gitter[0][2].owner == gitter[1][1].owner and gitter[1][1].owner == gitter[2][0].owner and gitter[2][0].owner != None:
+        return True
+    return False
