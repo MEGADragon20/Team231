@@ -7,7 +7,7 @@ def minimax(board, depth, maxen):
         for i in availableMoves(board):
             make_move(board, "x" , i)
             score = minimax(board, depth+1, False)
-            undo_move(board, i)
+            undoMove(board, i)
             best_score = max(score, bScore)
         return best_score
     else:
@@ -15,7 +15,7 @@ def minimax(board, depth, maxen):
         for i in availableMoves(board):
             make_move(board, "o" , i)
             score = minimax(board, depth+1, True)
-            undo_move(board, i)
+            undoMove(board, i)
             best_score = min(score, bScore)
         return best_score
 
