@@ -85,7 +85,7 @@ def hard_gamemode(field):
             return 10
         
     def undoMove(field, move: tuple):
-        field[move[0]][move[1]] = None
+        field[move[0]][move[1]].owner = None
 
 def check_for_victory(gitter):
     for i in gitter:
