@@ -1,3 +1,24 @@
+def minimax(board, depth, maxen):
+    if gameOver(board):
+        return evaluateBoard(board)
+
+    if maxen == True:
+        bScore = -9999999999999999999999
+        for i in availableMoves(board):
+            make_move(board, "x" , i)
+            score = minimax(board, depth+1, False)
+            undo_move(board, i)
+            best_score = max(score, bScore)
+        return best_score
+    else:
+        bScore = 9999999999999999999999
+        for i in availableMoves(board):
+            make_move(board, "o" , i)
+            score = minimax(board, depth+1, True)
+            undo_move(board, i)
+            best_score = min(score, bScore)
+        return best_score
+
 def availableMoves(field):
         dahfgjhsdfg = []
         for i in range(3):
