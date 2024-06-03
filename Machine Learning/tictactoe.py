@@ -55,12 +55,13 @@ def medium_gamemode(field):
 
 def hard_gamemode(field):
 
+
     def availableMoves(field):
         dahfgjhsdfg = []
         for i in range(3):
             for j in range(3):
                 if field[i][j] == None:
-                    dahfgjhsdfg.append(field[i][j])
+                    dahfgjhsdfg.append((i,j))
         return dahfgjhsdfg
 
 
