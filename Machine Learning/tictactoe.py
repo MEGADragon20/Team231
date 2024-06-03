@@ -83,6 +83,9 @@ def hard_gamemode(field):
             return -10
         elif winner == "o":
             return 10
+        
+    def undoMove(field, move: tuple):
+        field[move[0]][move[1]] = None
 
 def check_for_victory(gitter):
     for i in gitter:
