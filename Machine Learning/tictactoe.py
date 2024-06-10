@@ -5,68 +5,6 @@ import random as r
 import arcade.color
 import arcade.color
 
-def evaluate_move(field, coordinates):
-    def is_winner(field, player):
-        # Check rows, columns, and diagonals for a win
-        for i in range(3):
-            if all(field[i][j] == player for j in range(3)):  # Check row
-                return True
-            if all(field[j][i] == player for j in range(3)):  # Check column
-                return True
-        if all(field[i][i] == player for i in range(3)) or all(field[i][2 - i] == player for i in range(3)):  # Check diagonals
-            return True
-        return False
-
-    def minimax(field, depth, maximizing_player):
-        # Base cases: check if the game is over or if reached maximum depth
-        if check_for_victory(field) and ev_sum(sum(field)):
-            return -1
-        if is_winner(field, "o"):
-            return 1
-        if depth == 0:              
-            return 0
-
-        # If it's the maximizing player's turn (o), try to maximize the score
-        if maximizing_player:
-            max_eval = float('-inf')
-            for i in range(3):
-                for j in range(3):
-                    if field[i][j] == " ":
-                        field[i][j] = "o"
-                        eval = minimax(field, depth - 1, False)
-                        field[i][j] = " "  # Undo move
-                        max_eval = max(max_eval, eval)
-            return max_eval
-        # If it's the minimizing player's turn (x), try to minimize the score
-        else:
-            min_eval = float('inf')
-            for i in range(3):
-                for j in range(3):
-                    if field[i][j] == " ":
-                        field[i][j] = "x"
-                        eval = minimax(field, depth - 1, True)
-                        field[i][j] = " "  # Undo move
-                        min_eval = min(min_eval, eval)
-            return min_eval
-
-    # Check if the given coordinates are valid
-    if 0 <= coordinates[0] < 3 and 0 <= coordinates[1] < 3 and field[coordinates[0]][coordinates[1]] == " ":
-        field[coordinates[0]][coordinates[1]] = "o"  # Assume o is making the move
-        move_evaluation = minimax(field, 2, False)  # Evaluate the move
-        field[coordinates[0]][coordinates[1]] = " "  # Undo the move
-        if move_evaluation > 0:
-            return 1  # Good move
-        elif move_evaluation < 0:
-            return -1  # Bad move
-        else:
-            return 0  # Neutral move
-    else:
-        return 0  # Neutral move due to invalid coordinates
-
-print(evaluate_move([["x","",""],["o","o", ""],["x", "x", "o"]], (1,2)))
-def bestfield(field, player):
-    pass
-
 def easy_gamemode(field):
     ra = r.randint(0,9)
     za = ra%3 - 1
@@ -116,7 +54,92 @@ def medium_gamemode(field):
         return easy_gamemode(field)
 
 def hard_gamemode(field):
-    j = bestfield(field, "o")
+    def minimax(board, depth, maxen):
+        if gameOver(board):
+            return evaluateBoard(board)
+
+        if maxen == True:
+            bScore = -9999999999999999999999
+            for i in availableMoves(board):
+                make_move(board, "x" , i)
+                score = minimax(board, depth+1, False)
+                undoMove(board, i)
+                best_score = max(score, bScore)
+            return best_score
+        else:
+            bScore = 9999999999999999999999
+            for i in availableMoves(board):
+                make_move(board, "o" , i)
+                score = minimax(board, depth+1, True)
+                undoMove(board, i)
+                best_score = min(score, bScore)
+            return best_score
+
+    def availableMoves(field):
+            dahfgjhsdfg = []
+            for i in range(3):
+                for j in range(3):
+                    if field[i][j] == None:
+                        dahfgjhsdfg.append((i,j))
+            return dahfgjhsdfg
+
+    def findBestMove(field):
+        bestMove = None
+        bestScore = -100
+        for i in range(3):
+            for j in range(3):
+                move = (i,j)
+                make_move(field, "x", move)
+                moveScore = minimax(field, 0, False)
+                undoMove(field, move)
+                if moveScore > bestScore:
+                    bestScore = moveScore
+                    bestMove = move
+        return bestMove 
+    def evaluateBoard(field):
+        winner = None
+        for i in field:
+            if i[0].owner == i[1].owner and i[1].owner == i[2].owner and i[2].owner != None:
+                winner = i[0].owner
+        for i in range(3):
+            if field[0][i].owner == field[1][i].owner and field[1][i].owner == field[2][i].owner and field[2][i].owner != None:
+                winner = field[0][i].owner
+        if field[0][0].owner == field[1][1].owner and field[1][1].owner == field[2][2].owner and field[2][2].owner != None:
+            winner = field[0][0].owner
+        if field[0][2].owner == field[1][1].owner and field[1][1].owner == field[2][0].owner and field[2][0].owner != None:
+            winner = field[0][2].owner 
+        if winner == None:
+            return 0
+        elif winner == "x":
+            return -10
+        elif winner == "o":
+            return 10
+    
+        
+    def make_move(field, owner, move):
+        field[move[0]][move[1]].owner = owner
+
+    def undoMove(field, move: tuple):
+        field[move[0]][move[1]].owner = None
+
+    def gameOver(gitter):
+        for i in gitter:
+            if i[0].owner == i[1].owner and i[1].owner == i[2].owner and i[2].owner != None:
+                return True
+        for i in range(3):
+            if gitter[0][i].owner == gitter[1][i].owner and gitter[1][i].owner == gitter[2][i].owner and gitter[2][i].owner != None:
+                    return True
+        if gitter[0][0].owner == gitter[1][1].owner and gitter[1][1].owner == gitter[2][2].owner and gitter[2][2].owner != None:
+            return True
+        if gitter[0][2].owner == gitter[1][1].owner and gitter[1][1].owner == gitter[2][0].owner and gitter[2][0].owner != None:
+            return True
+        for i in range(3):
+            for j in range(3):
+                if gitter[i][j].owner == None:
+                    return False
+        return True
+    a = findBestMove(field)
+    j = field[a[0]][a[1]]
     j.texture = arcade.load_texture("data/o.png")
     j.owner = "o"
     return field
@@ -133,30 +156,21 @@ def check_for_victory(gitter):
     if gitter[0][2].owner == gitter[1][1].owner and gitter[1][1].owner == gitter[2][0].owner and gitter[2][0].owner != None:
         return True
     return False
-def sum(gitter):
-    s = 0
-    for i in gitter:
-        for j in i:
-            if j.owner != None:
-                s += 1
-    return s
 
-def ev_sum(p):
-    return "o" if p%2 == 0 else "x"
 def check_if_full(gitter):
     for i in range(3):
         for j in range(3):
             if gitter[i][j].owner == None:
                 return False
     return True
-    
 class Game(arcade.View):
-    def __init__(self, bot):
+    def __init__(self, bot, music):
         super().__init__()
         self.players= ["x","o"]
         self.activeplayer = self.players[0]
         self.gitter = [[None, None, None],[None, None, None],[None, None, None]]
         self.bot = bot
+        self.music = music
         self.cursor_sprite = arcade.Sprite("data/cursor1.png")
         self.cursor_sprite.center_x = 50
         self.cursor_sprite.center_y = 50
@@ -226,7 +240,7 @@ class Game(arcade.View):
         return super().on_mouse_press(x, y, button, modifiers)
 
     def end(self, l):
-        game_view = Victory(l)
+        game_view = Victory(l, self.music)
         t.sleep(0.1)
         self.window.show_view(game_view)
     
@@ -236,9 +250,10 @@ class Field(arcade.Sprite):
         self.owner = None
 
 class Victory(arcade.View):
-    def __init__(self, winner: str):
+    def __init__(self, winner: str, music):
         super().__init__()
         self.winner = winner
+        self.music = music
 
     def on_show(self):
         arcade.set_background_color(arcade.color.BLACK)
@@ -252,16 +267,18 @@ class Victory(arcade.View):
 
     def on_mouse_release(self, x: int, y: int, button: int, modifiers: int):
         if button == 1:
-            game = Home()
+            game = Home(self.music,1)
             self.window.show_view(game)
         return super().on_mouse_press(x, y, button, modifiers)
 
-
+#hi
 
 class Home(arcade.View):
-    def __init__(self):
+    def __init__(self, music, inition):
         super().__init__()
+        self.inition = inition
         self.mode = 0
+        self.music = music
         self.standsprlist = arcade.SpriteList()
         self.arrow = arcade.Sprite("data/ArrowL.png", 4)
         self.arrow.center_x = 550
@@ -275,9 +292,14 @@ class Home(arcade.View):
         self.settings.center_x = 550
         self.settings.center_y = 550
         self.standsprlist.append(self.settings)
+        if  self.inition == 0:
+            self.musik2 = arcade.load_sound("data/Entspannungsmusik-mit-5-Minuten-Ostseewellen.wav")
+            self.musik1 = arcade.load_sound("data/5_-Extinction-Level-Event-Jingle-Punks.wav")
+            self.musik0 = arcade.load_sound("data/DigBarGayRaps-4-BIG-GUYS.wav")
+            self.musik3 = arcade.load_sound("data/Godzilla-Peter-Griffin-_feat.-Lois-Griffin_.wav")
+            self.musiks = [self.musik0, self.musik1, self.musik2, self.musik3]
 
-        self.background_music = arcade.load_sound("data/DigBarGayRaps-4-BIG-GUYS.wav")
-        arcade.play_sound(self.background_music)
+            self.musikplayer = arcade.play_sound(self.musiks[self.music])
 
         self.robotsprlist = arcade.SpriteList()
 
@@ -297,7 +319,7 @@ class Home(arcade.View):
 
         self.robotsprlist.draw(pixelated=True)
         self.standsprlist.draw(pixelated=True)
-
+        
 
     def on_mouse_release(self, x: int, y: int, button: int, modifiers: int):
         if x < 600 and y > 200 and x > 500 and y < 400:
@@ -306,16 +328,17 @@ class Home(arcade.View):
             self.mode -= 1
         elif x > 150 and x < 450:
             if self.mode == 0:
-                game = Game("d")
+                game = Game("d",self.music)
             elif self.mode == 1:
-                game = Game("a")
+                game = Game("a",self.music)
             elif self.mode == 2:
-                game = Game("b")
+                game = Game("b",self.music)
             else:
-                game = Game("c")
+                game = Game("c",self.music)
 
             self.window.show_view(game)
         elif x > 450 and y > 450:
+            arcade.stop_sound(self.musikplayer)
             settings = Settings()
             self.window.show_view(settings)
         
@@ -329,47 +352,48 @@ class Settings(arcade.View):
         self.arrow.center_x = 550
         self.arrow.center_y = 400
         self.standardsprlist.append(self.arrow)
-        self.arrow = arcade.Sprite("data/ArrowR.png", 2)
+        self.arrow = arcade.Sprite("data/ArrowR.png", 1)
         self.arrow.center_x = 50
         self.arrow.center_y = 400
         self.standardsprlist.append(self.arrow)
-        self.settings = arcade.Sprite("data/Settings.png", 2)
+        self.settings = arcade.Sprite("data/Settings.png", 1)
         self.settings.center_x = 550
         self.settings.center_y = 550
         self.standardsprlist.append(self.settings)
 
     def on_draw(self):
-        self.clear()
-        arcade.set_background_color(arcade.color_from_hex_string("#303030"))
 
+        arcade.set_background_color(arcade.color_from_hex_string("#303030"))
+        self.clear()
         self.standardsprlist.draw(pixelated=True)
-        arcade.draw_text("Musik", 0, 380, arcade.color_from_hex_string("000000"), 12, 600, "center")
+
         if self.choosen_music % 4 == 0:
-            arcade.draw_text("Gayyy", 0, 380, arcade.color_from_hex_string("000000"), 12, 600, "center")
+            arcade.draw_text("Gayyy", 0, 392, arcade.color_from_hex_string("000000"), 12, 600, "center")
         elif self.choosen_music % 4 == 1:
-            arcade.draw_text("Action", 0, 380, arcade.color_from_hex_string("000000"), 12, 600, "center")
+            arcade.draw_text("Action", 0, 392, arcade.color_from_hex_string("000000"), 12, 600, "center")
         elif self.choosen_music % 4 == 2:
-            arcade.draw_text("Chill", 0, 380, arcade.color_from_hex_string("000000"), 12, 600, "center") 
+            arcade.draw_text("Chill", 0, 392, arcade.color_from_hex_string("000000"), 12, 600, "center") 
         elif self.choosen_music % 4 == 3:
-            arcade.draw_text("M&Ms", 0, 380, arcade.color_from_hex_string("000000"), 12, 600, "center")  
+            arcade.draw_text("M&Ms", 0, 392, arcade.color_from_hex_string("000000"), 12, 600, "center") 
+        arcade.draw_text("Musik", 0, 420, arcade.color_from_hex_string("000000"), 12, 600, "center",bold=True)
+
 
     def on_mouse_release(self, x: int, y: int, button: int, modifiers: int):
-        if x < 600 and y > 200 and x > 500 and y < 400:
+        if x < 600 and y > 100 and x > 500 and y < 500:
             self.choosen_music += 1
-        elif x < 100 and y > 200 and x > 0 and y < 400:
+        elif x < 100 and y > 100 and x > 0 and y < 400:
             self.choosen_music -= 1
         if x > 450 and y > 450:
-            settings = Home()
+            settings = Home(self.choosen_music % 4, 0)
             self.window.show_view(settings)
-
+        
 
 
 class W(arcade.Window):
     def __init__(self):
         super().__init__(width=600, height=600, title="TicTacToe")
-        startscreen = Home()
+        startscreen = Home(0, 0)
         self.show_view(startscreen)
-        self.music = 0
 
 
 game = W()
