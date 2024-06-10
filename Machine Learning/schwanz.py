@@ -85,3 +85,5 @@ def gameOver(gitter):
 
 field = [[None, None, "o"],["o", "x", None],["o", None, "x"]]
 print(findBestMove(field))
+
+
