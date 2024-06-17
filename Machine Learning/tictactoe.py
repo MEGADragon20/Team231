@@ -56,7 +56,7 @@ def medium_gamemode(field):
 def hard_gamemode(field):
     print("hard_gamemode")
     
-    def minimax(board, depth, maxen):
+    def minimax(board, depth, maxen, alpha, beta):
         if gameOver(board):
             return evaluateBoard(board)
 
@@ -88,6 +88,8 @@ def hard_gamemode(field):
     def findBestMove(field):
         bestMove = None
         bestScore = float('-inf')
+        alpha = float('-inf')
+        beta = float('-inf')
         for move in availableMoves(field):
             make_move(field, "o", move)
             moveScore = minimax(field, 0, False)
