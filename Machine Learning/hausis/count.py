@@ -23,5 +23,6 @@ pseudo = [[None, None, None],[None, None, None],[None, None, None]]
 while True:
     x = 0
     y = 0
+    
 
      
