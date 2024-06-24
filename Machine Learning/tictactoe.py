@@ -54,95 +54,105 @@ def medium_gamemode(field):
         return easy_gamemode(field)
 
 def hard_gamemode(field):
-    def minimax(board, depth, maxen):
+    print("hard_gamemode")
+    
+    def minimax(board, depth, maxen, alpha, beta):
         if gameOver(board):
             return evaluateBoard(board)
 
-        if maxen == True:
-            bScore = -9999999999999999999999
+        if maxen:
+            bScore = float('-inf')
             for i in availableMoves(board):
-                make_move(board, "x" , i)
-                score = minimax(board, depth+1, False)
+                make_move(board, "o", i)
+                score = minimax(board, depth + 1, False)
                 undoMove(board, i)
-                best_score = max(score, bScore)
-            return best_score
+                bScore = max(score, bScore)
+            return bScore
         else:
-            bScore = 9999999999999999999999
+            bScore = float('inf')
             for i in availableMoves(board):
-                make_move(board, "o" , i)
-                score = minimax(board, depth+1, True)
+                make_move(board, "x", i)
+                score = minimax(board, depth + 1, True)
                 undoMove(board, i)
-                best_score = min(score, bScore)
-            return best_score
+                bScore = min(score, bScore)
+            return bScore
 
     def availableMoves(field):
-            dahfgjhsdfg = []
-            for i in range(3):
-                for j in range(3):
-                    if field[i][j] == None:
-                        dahfgjhsdfg.append((i,j))
-            return dahfgjhsdfg
+        moves = []
+        for i in range(3):
+            for j in range(3):
+                if field[i][j].owner is None:
+                    moves.append((i, j))
+        return moves
 
     def findBestMove(field):
         bestMove = None
-        bestScore = -100
-        for i in range(3):
-            for j in range(3):
-                move = (i,j)
-                make_move(field, "x", move)
-                moveScore = minimax(field, 0, False)
-                undoMove(field, move)
-                if moveScore > bestScore:
-                    bestScore = moveScore
-                    bestMove = move
-        return bestMove 
+        bestScore = float('-inf')
+        alpha = float('-inf')
+        beta = float('-inf')
+        for move in availableMoves(field):
+            make_move(field, "o", move)
+            moveScore = minimax(field, 0, False)
+            undoMove(field, move)
+            if moveScore > bestScore:
+                bestScore = moveScore
+                bestMove = move
+        return bestMove
+
     def evaluateBoard(field):
         winner = None
-        for i in field:
-            if i[0].owner == i[1].owner and i[1].owner == i[2].owner and i[2].owner != None:
-                winner = i[0].owner
-        for i in range(3):
-            if field[0][i].owner == field[1][i].owner and field[1][i].owner == field[2][i].owner and field[2][i].owner != None:
-                winner = field[0][i].owner
-        if field[0][0].owner == field[1][1].owner and field[1][1].owner == field[2][2].owner and field[2][2].owner != None:
+        for row in field:
+            if row[0].owner == row[1].owner == row[2].owner and row[0].owner is not None:
+                winner = row[0].owner
+
+        for col in range(3):
+            if field[0][col].owner == field[1][col].owner == field[2][col].owner and field[0][col].owner is not None:
+                winner = field[0][col].owner
+
+        if field[0][0].owner == field[1][1].owner == field[2][2].owner and field[0][0].owner is not None:
             winner = field[0][0].owner
-        if field[0][2].owner == field[1][1].owner and field[1][1].owner == field[2][0].owner and field[2][0].owner != None:
-            winner = field[0][2].owner 
-        if winner == None:
+
+        if field[0][2].owner == field[1][1].owner == field[2][0].owner and field[0][2].owner is not None:
+            winner = field[0][2].owner
+
+        if winner is None:
             return 0
         elif winner == "x":
             return -10
         elif winner == "o":
             return 10
-    
-        
+
     def make_move(field, owner, move):
         field[move[0]][move[1]].owner = owner
 
-    def undoMove(field, move: tuple):
+    def undoMove(field, move):
         field[move[0]][move[1]].owner = None
 
     def gameOver(gitter):
-        for i in gitter:
-            if i[0].owner == i[1].owner and i[1].owner == i[2].owner and i[2].owner != None:
+        for row in gitter:
+            if row[0].owner == row[1].owner == row[2].owner and row[0].owner is not None:
                 return True
-        for i in range(3):
-            if gitter[0][i].owner == gitter[1][i].owner and gitter[1][i].owner == gitter[2][i].owner and gitter[2][i].owner != None:
-                    return True
-        if gitter[0][0].owner == gitter[1][1].owner and gitter[1][1].owner == gitter[2][2].owner and gitter[2][2].owner != None:
+        for col in range(3):
+            if gitter[0][col].owner == gitter[1][col].owner == gitter[2][col].owner and gitter[0][col].owner is not None:
+                return True
+        if gitter[0][0].owner == gitter[1][1].owner == gitter[2][2].owner and gitter[0][0].owner is not None:
             return True
-        if gitter[0][2].owner == gitter[1][1].owner and gitter[1][1].owner == gitter[2][0].owner and gitter[2][0].owner != None:
+        if gitter[0][2].owner == gitter[1][1].owner == gitter[2][0].owner and gitter[0][2].owner is not None:
             return True
-        for i in range(3):
-            for j in range(3):
-                if gitter[i][j].owner == None:
+        for row in gitter:
+            for cell in row:
+                if cell.owner is None:
                     return False
         return True
+
     a = findBestMove(field)
-    j = field[a[0]][a[1]]
-    j.texture = arcade.load_texture("data/o.png")
-    j.owner = "o"
+    if a:
+        j = field[a[0]][a[1]]
+        j.texture = arcade.load_texture("data/o.png")
+        j.owner = "o"
+    
     return field
+
 
 def check_for_victory(gitter):
     for i in gitter:
@@ -221,6 +231,8 @@ class Game(arcade.View):
                                     self.gitter = easy_gamemode(self.gitter)
                                 elif self.bot == "b":
                                     self.gitter = medium_gamemode(self.gitter)
+                                elif self.bot == "c":
+                                    self.gitter = hard_gamemode(self.gitter)
                                 a = self.players[0]
                                 self.players.pop(0)
                                 self.players.append(a)
