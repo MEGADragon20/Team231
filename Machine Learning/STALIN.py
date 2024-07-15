@@ -4,59 +4,117 @@ import random as r
 
 import arcade.color
 import arcade.color
+counter = 0
+def hard_gamemode_N(field):
+    
+    print("hard_gamemode_N")
+    
+    def minimax(board, depth, maxen):
+        global counter 
+        counter += 1
+        if gameOver(board):
+            return evaluateBoard(board)
 
-def easy_gamemode(field):
-    ra = r.randint(0,9)
-    za = ra%3 - 1
-    zb = int(ra/3) - 1 
-    j = field[zb][za]
-    if j.owner == None:
+        if maxen:
+            bScore = float('-inf')
+            for i in availableMoves(board):
+                make_move(board, "o", i)
+                score = minimax(board, depth + 1, False)
+                undoMove(board, i)
+                bScore = max(score, bScore)
+            return bScore
+        else:
+            bScore = float('inf')
+            for i in availableMoves(board):
+                make_move(board, "x", i)
+                score = minimax(board, depth + 1, True)
+                undoMove(board, i)
+                bScore = min(score, bScore)
+            return bScore
+
+    def availableMoves(field):
+        moves = []
+        for i in range(3):
+            for j in range(3):
+                if field[i][j].owner is None:
+                    moves.append((i, j))
+        return moves
+
+    def findBestMove(field):
+        bestMove = None
+        bestScore = float('-inf')
+
+        for move in availableMoves(field):
+            make_move(field, "o", move)
+            moveScore = minimax(field, 0, False)
+            undoMove(field, move)
+            if moveScore > bestScore:
+                bestScore = moveScore
+                bestMove = move
+        return bestMove
+
+    def evaluateBoard(field):
+        winner = None
+        for row in field:
+            if row[0].owner == row[1].owner == row[2].owner and row[0].owner is not None:
+                winner = row[0].owner
+
+        for col in range(3):
+            if field[0][col].owner == field[1][col].owner == field[2][col].owner and field[0][col].owner is not None:
+                winner = field[0][col].owner
+
+        if field[0][0].owner == field[1][1].owner == field[2][2].owner and field[0][0].owner is not None:
+            winner = field[0][0].owner
+
+        if field[0][2].owner == field[1][1].owner == field[2][0].owner and field[0][2].owner is not None:
+            winner = field[0][2].owner
+
+        if winner is None:
+            return 0
+        elif winner == "x":
+            return -10
+        elif winner == "o":
+            return 10
+
+    def make_move(field, owner, move):
+        field[move[0]][move[1]].owner = owner
+
+    def undoMove(field, move):
+        field[move[0]][move[1]].owner = None
+
+    def gameOver(gitter):
+        for row in gitter:
+            if row[0].owner == row[1].owner == row[2].owner and row[0].owner is not None:
+                return True
+        for col in range(3):
+            if gitter[0][col].owner == gitter[1][col].owner == gitter[2][col].owner and gitter[0][col].owner is not None:
+                return True
+        if gitter[0][0].owner == gitter[1][1].owner == gitter[2][2].owner and gitter[0][0].owner is not None:
+            return True
+        if gitter[0][2].owner == gitter[1][1].owner == gitter[2][0].owner and gitter[0][2].owner is not None:
+            return True
+        for row in gitter:
+            for cell in row:
+                if cell.owner is None:
+                    return False
+        return True
+
+    a = findBestMove(field)
+    if a:
+        j = field[a[0]][a[1]]
         j.texture = arcade.load_texture("data/o.png")
         j.owner = "o"
-        return field
-    else:
-        return easy_gamemode(field)
-def medium_gamemode(field):
-    j = ""
-    for b in range(3):
-        a = b-1
-        if field[0][a].owner == field[1][a].owner != None and field[2][a].owner == None:
-            j = field[2][a]
-        elif field[0][a].owner == field[2][a].owner != None and field[1][a].owner == None:
-            j = field[1][a]
-        elif field[1][a].owner == field[2][a].owner != None and field[0][a].owner == None:
-            j = field[0][a]
-        elif field[a][0].owner == field[a][1].owner != None and field[a][2].owner == None:
-            j = field[a][2]
-        elif field[a][0].owner == field[a][2].owner != None and field[a][1].owner == None:
-            j = field[a][1]
-        elif field[a][1].owner == field[a][2].owner != None and field[a][0].owner == None:
-            j = field[a][0]
-    if j == "":
-        if field[0][0].owner == field[1][1].owner != None and field[2][2].owner == None:
-            j = field[2][2]
-        elif field[0][0].owner == field[2][2].owner != None and field[1][1].owner == None:
-            j = field[1][1]
-        elif field[2][2].owner == field[1][1].owner != None and field[0][0].owner == None:
-            j = field[0][0]
+        print(counter)
+    
 
-        elif field[2][0].owner == field[1][1].owner != None and field[0][2].owner == None:
-            j = field[0][2]
-        elif field[0][2].owner == field[1][1].owner != None and field[2][0].owner == None:
-            j = field[2][0]
-        elif field[2][0].owner == field[0][2].owner != None and field[1][1].owner == None:
-            j = field[1][1]
-    if j != "":
-        j.texture = arcade.load_texture("data/o.png")
-        j.owner = "o"
-        return field
-    else:
-        return easy_gamemode(field)
+    return field
 
 def hard_gamemode(field):
     print("hard_gamemode")
     
     def minimax(board, depth, maxen, alpha, beta):
+        global counter
+        counter += 1
         if gameOver(board):
             return evaluateBoard(board)
 
@@ -74,7 +132,6 @@ def hard_gamemode(field):
         else:
             bScore = float('inf')
             for i in availableMoves(board):
-                print("50")
                 make_move(board, "x", i)
                 score = minimax(board, depth + 1, True, alpha, beta)
                 undoMove(board, i)
@@ -157,6 +214,7 @@ def hard_gamemode(field):
         j = field[a[0]][a[1]]
         j.texture = arcade.load_texture("data/o.png")
         j.owner = "o"
+        print(counter)
     
     return field
 
@@ -235,9 +293,9 @@ class Game(arcade.View):
                         else:
                             if self.bot != "d":
                                 if self.bot == "a":
-                                    self.gitter = easy_gamemode(self.gitter)
+                                    self.gitter = hard_gamemode_N(self.gitter)
                                 elif self.bot == "b":
-                                    self.gitter = medium_gamemode(self.gitter)
+                                    self.gitter = hard_gamemode_N(self.gitter)
                                 elif self.bot == "c":
                                     self.gitter = hard_gamemode(self.gitter)
                                 a = self.players[0]
