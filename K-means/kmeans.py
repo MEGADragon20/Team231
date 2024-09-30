@@ -74,8 +74,11 @@ def main(coords, solution, centers, samples):
 
 
 g = main(x_y, c, exampleCenters, exampleNSamples)
+print("")
+print("")
+print(g)
 for i in g:
-    plt.axline((-12, i[0]), (12, i[0]))
-    plt.axline(( i[1], -12), (i[1], 12))
+    plt.axline((0, i[0]), slope = 0)
+    plt.axline(( i[1], 0), slope= math.inf)
 
 plt.show()
