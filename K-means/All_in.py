@@ -4,7 +4,7 @@ import math
 import numpy as np
 
 exampleCenters = 3
-exampleNSamples = 30
+exampleNSamples = 100
 x_y, c = make_blobs(cluster_std = 0.6, n_samples= exampleNSamples, centers= exampleCenters)
 #print(x_y, c)
 
@@ -56,6 +56,7 @@ def goth_rough_everything(array, centers):
     forbidden = []
     for i in range(centers):
         segments.append([])
+    print(len(array))
     while len(array) > len(forbidden):
         neighbor, distance = find_nearest_neighbor(current, array, forbidden)
         if distance <= sg_30_avg:
@@ -74,17 +75,14 @@ def goth_rough_everything(array, centers):
     return segments
 
 g = goth_rough_everything(x_y, centers= 3)
+print(g)
 for i in g:
-    print(i)
-    print("#")
     if len(i) > 0:
-        plt.plot(i[0])
+        k = list(zip(*i))
+        print(k)
+
+        plt.plot(k[0], k[1])
 plt.show()
-
-
-
-
-
 
 
 

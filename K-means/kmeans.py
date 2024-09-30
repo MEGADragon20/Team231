@@ -10,6 +10,7 @@ print(x_y, c)
 plt.scatter(x_y[:, 0], x_y[:, 1], c=c)
 
 
+
 def abstand_berechnen(pair1, pair2):
     x1, y1 = pair1[0], pair1[1]
     x2, y2 = pair2[0], pair2[1]
