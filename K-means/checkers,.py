@@ -10,6 +10,16 @@ x_y, c = make_blobs(cluster_std = 0.6, n_samples= exampleNSamples, centers= exam
 
 plt.scatter(x_y[:, 0], x_y[:, 1], c=c)
 
+def max_distance_in_segment(seg):
+    if len(seg) < 5:
+        return 0
+    current_max = 0
+    for i in seg:
+        for j in seg:
+            if abstand_berechnen([i, j]) > current_max:
+                current_max = abstand_berechnen([i, j])
+    return current_max
+
 def biggest_growth_div(l: list[int]):
     last_value = None
     current_max_growth = -np.inf
@@ -81,7 +91,8 @@ def goth_rough_everything(array, centers):
     current_segment = 0
     while len(array) > len(forbidden)/2:
         neighbor, distance = find_nearest_neighbor(current, array, forbidden)
-        if distance <= filtervalue:
+        
+        if distance <= filtervalue and distance <= max_distance_in_segment(segments[0]):
             segments[current_segment].append(neighbor)
         else:
             if current_segment +1 < len(segments):
@@ -102,31 +113,4 @@ for i in g:
 
 
 plt.show()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

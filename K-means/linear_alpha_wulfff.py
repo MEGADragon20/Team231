@@ -62,15 +62,20 @@ def avg(l) -> float:
           
 def goth_rough_everything(array, centers):
     distances = []
-    for p in range(len(array)):
-        pointA = array[p-1]
-        for pointB in array:
-            if pointA[0] != pointB[0] and pointA[1] != pointB[1]:
-                distances.append(abstand_berechnen([pointA, pointB]))
+    fb = []
+    current = array[0]
+    a = 0
+    while len(array) > len(fb):
+        print(a)
+        a += 1
+        neighbor, distance = find_nearest_neighbor(current, array, fb)
+        distances.append(distance)
+        fb.append(current)
+        current = neighbor
 
     distances.sort()
     print(distances)
-    filtervalue = biggest_growth_sub(distances)
+    filtervalue = distances[-(exampleCenters-1)]
 
 
     current = array[0]
