@@ -6,7 +6,7 @@ import copy
 exampleCenters = 3
 exampleNSamples = 100
 x_y, c = make_blobs(cluster_std = 0.8, n_samples= exampleNSamples, centers= exampleCenters)
-print(x_y, c)
+print(c)
 
 plt.scatter(x_y[:, 0], x_y[:, 1], c=c)
 
@@ -83,8 +83,7 @@ def square_zuordnen(liny, linx,coords):
     squares_anzahl_sorted=copy.deepcopy(squares_anzahl)
     squares_anzahl_sorted.sort()
     squares_anzahl_sorted.reverse()
-    print(squares_anzahl)
-    print(squares_anzahl_sorted)
+
     c=-3
     for i in squares_anzahl_sorted[:3]:
         squares_anzahl[squares_anzahl.index(i)]=c
@@ -129,8 +128,9 @@ def square_zuordnen(liny, linx,coords):
 
     for i in range(len(squares_anzahl)):
         squares_anzahl[i]+=3
-
-    return squares_anzahl
+    redrun = square_to_points(squares,squares_anzahl,coords)
+    print("#",squares_anzahl,"#")
+    return redrun
 
 
 
@@ -147,14 +147,42 @@ def squaresmake(liny, linx):
     squares.append([[max(linx),max(liny)],[100, 100]])
     return squares 
 
+def square_to_points(squares,squareswert,coords):
+    list=[]
+    for i in coords:
+        if i[0] < squares[0][1][0]:
+            if i[1] < squares[0][1][1]:
+                list.append(squareswert[0])
+            elif i[1] < squares[1][1][1]:
+                list.append(squareswert[1])
+            else:
+                list.append(squareswert[2])
+        elif i[0] < squares[3][1][0]:
+            if i[1] < squares[0][1][1]:
+                list.append(squareswert[3])
+            elif i[1] < squares[1][1][1]:
+                list.append(squareswert[4])
+            else:
+                list.append(squareswert[5])
+        else:
+            if i[1] < squares[0][1][1]:
+                list.append(squareswert[6])
+            elif i[1] < squares[1][1][1]:
+                list.append(squareswert[7])
+            else:
+                list.append(squareswert[8])
+    return list
+                
+
+
+
+
 def main(coords, solution, centers, samples):
     y_h = highest(samples, centers, y_sorted(coords))
     midsy = findymedian(y_h)
-    print("'################################")
-    print(midsy)
+
     liny = findlines(midsy)
-    print(liny)
-    print("################################")
+ 
     x_h = highest(samples, centers, x_sorted(coords))
     midsx = findymedian(x_h)
     linx = findlines(midsx)
