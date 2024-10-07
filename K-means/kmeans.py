@@ -1,10 +1,11 @@
 from sklearn.datasets import make_blobs
 import matplotlib.pyplot as plt
 import math
+import copy
 
 exampleCenters = 3
 exampleNSamples = 100
-x_y, c = make_blobs(cluster_std = 0.6, n_samples= exampleNSamples, centers= exampleCenters)
+x_y, c = make_blobs(cluster_std = 0.8, n_samples= exampleNSamples, centers= exampleCenters)
 print(x_y, c)
 
 plt.scatter(x_y[:, 0], x_y[:, 1], c=c)
@@ -57,7 +58,94 @@ def findlines(mids):
         lines.append((mids[a]+mids[a+1])/2)
     return lines
 
-        
+def squares_anzahl_ber(squares_koord):
+    anzahl=[]
+    for i in squares_koord:
+        anzahl.append(len(i))
+    return anzahl
+
+def squares_numbern(squares,samples):
+    anzahl=[[],[],[],[],[],[],[],[],[]]
+    counter = 0
+    for i in squares:
+        for j in samples:
+            if j[0] > i[0][0] and j[0] < i[1][0] and j[1] > i[0][1] and j[1] < i[1][1]:
+                anzahl[counter].append(j)
+        counter += 1
+    return anzahl
+
+def square_zuordnen(liny, linx,coords):
+    squares=squaresmake(liny,linx)
+    squares_koords=squares_numbern(squares, coords)
+    squares_anzahl=squares_anzahl_ber(squares_koords)
+    
+    squares_anzahl_sorted=copy.deepcopy(squares_anzahl)
+    squares_anzahl_sorted.sort()
+    squares_anzahl_sorted.reverse()
+    print(squares_anzahl)
+    print(squares_anzahl_sorted)
+    c=-3
+    for i in squares_anzahl_sorted[:3]:
+        squares_anzahl[squares_anzahl.index(i)]=c
+        c+=1
+    counter=0
+    for i in squares_anzahl:
+        if i > 0:
+            x_sum = 0
+            y_sum = 0
+            for j in squares_koords[counter]:
+                x_sum += j[0]
+                y_sum += j[1]
+            x_avr=x_sum/i
+            y_avr=y_sum/i
+            distances=[]
+            distances.append((x_avr-min(linx))**2)
+            distances.append((x_avr-max(linx))**2)
+            distances.append((y_avr-liny[0])**2)
+            distances.append((y_avr-liny[1])**2)
+            min_din=distances.index(min(distances))
+            if min_din==0:
+                if x_avr < min(linx):
+                    squares_anzahl[counter]=squares_anzahl[counter+3]
+                else:
+                    squares_anzahl[counter]=squares_anzahl[counter-3]
+            if min_din==1:
+                if x_avr < max(linx):
+                    squares_anzahl[counter]=squares_anzahl[counter+3]
+                else:
+                    squares_anzahl[counter]=squares_anzahl[counter-3]
+            if min_din==2:
+                if y_avr < min(liny):
+                    squares_anzahl[counter]=squares_anzahl[counter+1]
+                else:
+                    squares_anzahl[counter]=squares_anzahl[counter-1]
+            if min_din==3:
+                if y_avr < max(liny):
+                    squares_anzahl[counter]=squares_anzahl[counter+1]
+                else:
+                    squares_anzahl[counter]=squares_anzahl[counter-1]
+        counter+=1
+
+    for i in range(len(squares_anzahl)):
+        squares_anzahl[i]+=3
+
+    return squares_anzahl
+
+
+
+def squaresmake(liny, linx):
+    squares = []
+    squares.append([[-100,-100],[min(linx), min(liny)]])
+    squares.append([[-100,min(liny)],[min(linx), max(liny)]]) 
+    squares.append([[-100,max(liny)],[min(linx), 100]])
+    squares.append([[min(linx),-100],[max(linx), min(liny)]])     
+    squares.append([[min(linx),min(liny)],[max(linx), max(liny)]])     
+    squares.append([[min(linx),max(liny)],[max(linx), 100]])   
+    squares.append([[max(linx),-100],[100, min(liny)]])     
+    squares.append([[max(linx),min(liny)],[100, max(liny)]])     
+    squares.append([[max(linx),max(liny)],[100, 100]])
+    return squares 
+
 def main(coords, solution, centers, samples):
     y_h = highest(samples, centers, y_sorted(coords))
     midsy = findymedian(y_h)
@@ -69,6 +157,7 @@ def main(coords, solution, centers, samples):
     x_h = highest(samples, centers, x_sorted(coords))
     midsx = findymedian(x_h)
     linx = findlines(midsx)
+    print(square_zuordnen(liny,linx,coords))
     return (liny, linx)
 
 
@@ -76,9 +165,12 @@ def main(coords, solution, centers, samples):
 g = main(x_y, c, exampleCenters, exampleNSamples)
 print("")
 print("")
-print(g)
-for i in g:
-    plt.axline((0, i[0]), slope = 0)
-    plt.axline(( i[1], 0), slope= math.inf)
+print("#",g,"#")
+
+plt.axline((0, g[0][0]), slope = 0)
+plt.axline((0, g[0][1]), slope= 0)
+
+plt.axline((g[1][0],0), slope = math.inf)
+plt.axline((g[1][1],0), slope= math.inf)
 
 plt.show()
