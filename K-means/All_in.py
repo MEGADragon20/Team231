@@ -4,12 +4,35 @@ import math
 import numpy as np
 
 exampleCenters = 3
-exampleNSamples = 30
+exampleNSamples = 100
 x_y, c = make_blobs(cluster_std = 0.6, n_samples= exampleNSamples, centers= exampleCenters)
 #print(x_y, c)
 
 plt.scatter(x_y[:, 0], x_y[:, 1], c=c)
 
+def biggest_growth_div(l: list[int]):
+    last_value = None
+    current_max_growth = -np.inf
+    value = None
+    for i in l:
+        if last_value != None:
+            if current_max_growth  <= i/last_value:
+                current_max_growth = i/last_value
+                value = i
+        last_value = i
+    return value
+
+def biggest_growth_sub(l: list[int]):
+    last_value = None
+    current_max_growth = -np.inf
+    value = None
+    for i in l:
+        if last_value!= None:
+            if current_max_growth  <= i-last_value:
+                current_max_growth = i-last_value
+                value = i
+        last_value = i
+    return value
 
 def abstand_berechnen(punkte):
         return math.sqrt((punkte[0][0]-punkte[1][0])**2+(punkte[0][1]-punkte[1][1])**2)
@@ -43,52 +66,41 @@ def goth_rough_everything(array, centers):
                 distances.append(abstand_berechnen([pointA, pointB]))
 
     distances.sort()
-    sg = distances[:round(len(distances)/centers)]
-    sg_avg = avg(sg)
-    sg_max = sg[-1]
-    sg_30_avg = avg(sg[-30:])
-    print(sg_30_avg, sg_max)
+    filtervalue = biggest_growth_sub(distances)
 
 
     current = array[0]
     segments = []
-    castouts = []
     forbidden = []
     for i in range(centers):
         segments.append([])
-    while len(array) > len(forbidden):
+    current_segment = 0
+    while len(array) > len(forbidden)/2:
         neighbor, distance = find_nearest_neighbor(current, array, forbidden)
-        if distance <= sg_30_avg:
-            segments[0].append(neighbor)
-        elif sg_max > distance > sg_30_avg:
-            castouts.append(neighbor)
+        if distance <= filtervalue:
+            print("n", neighbor)
+            segments[current_segment].append(neighbor)
         else:
-            a = segments[0]
-            segments.pop(0)
-            segments.append(a)
-            segments[0].append(neighbor)
+            print("jump")
+            if current_segment +1 < len(segments):
+                current_segment += 1
+                segments[current_segment].append(neighbor)
+            else:
+                print("out")
+                break
 
         forbidden.append(current)
         current = neighbor
-
     return segments
 
 g = goth_rough_everything(x_y, centers= 3)
 for i in g:
     print(i)
-    print("#")
+for i in g:
     if len(i) > 0:
-        plt.plot(i[0])
+        k = list(zip(*i))
+        plt.plot(k[0], k[1])
 plt.show()
-
-
-
-
-
-
-
-
-
 
 
 
