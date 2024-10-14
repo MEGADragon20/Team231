@@ -69,43 +69,36 @@ def avg(l) -> float:
     for i in l:
         sum += i
     return sum/len(l) if len(l) != 0 else None
-          
+
+def generate_chain(array):
+    current = array[0]
+    mem = []
+    count = 0
+    mem[count].append(current)
+    while True:
+        a = find_nearest_neighbor(current, array, [current])[0]
+        if a in mem[count]:
+            current = find_nearest_neighbor(current, array, [mem])[0]
+            count += 1
+            mem[count].append(current)
+        else:
+            mem[0].append(a)
+            current = a
+
 def goth_rough_everything(array, centers):
-    distances = []
-    for p in range(len(array)):
-        pointA = array[p-1]
-        for pointB in array:
-            if pointA[0] != pointB[0] and pointA[1] != pointB[1]:
-                distances.append(abstand_berechnen([pointA, pointB]))
-
-    distances.sort()
-    print(distances)
-    filtervalue = biggest_growth_sub(distances)
-
-
+    mem = []
     current = array[0]
     segments = []
-    forbidden = []
-    for i in range(centers):
-        segments.append([])
-    current_segment = 0
-    while len(array) > len(forbidden)/2:
-        neighbor, distance = find_nearest_neighbor(current, array, forbidden)
+    while True:
+        nearest = find_nearest_neighbor(current, array, [])
+        #if nearest == the_point_before:
+        #    current
         
-        if distance <= filtervalue and distance <= max_distance_in_segment(segments[0]):
-            segments[current_segment].append(neighbor)
-        else:
-            if current_segment +1 < len(segments):
-                current_segment += 1
-                segments[current_segment].append(neighbor)
-            else:
-                break
 
-        forbidden.append(current)
-        current = neighbor
-    return segments
-g = goth_rough_everything(x_y, centers= 3)
+                
 
+    
+g = generate_chain(x_y)
 for i in g:
     if len(i) > 1: 
         k = list(zip(*i))
