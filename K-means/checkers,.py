@@ -3,9 +3,9 @@ import matplotlib.pyplot as plt
 import math
 import numpy as np
 
-exampleCenters = 3
-exampleNSamples = 75
-x_y, c = make_blobs(cluster_std = 0.6, n_samples= exampleNSamples, centers= exampleCenters)
+exampleCenters = 1
+exampleNSamples = 25
+x_y, c = make_blobs(cluster_std = 1, n_samples= exampleNSamples, centers= exampleCenters)
 #print(x_y, c)
 
 plt.scatter(x_y[:, 0], x_y[:, 1], c=c)
@@ -69,38 +69,41 @@ def avg(l) -> float:
     for i in l:
         sum += i
     return sum/len(l) if len(l) != 0 else None
+def x_is_not_in_y(x,y) -> bool:
+    for i in y:
+        if i[0] == x[0] and i[1] == x[1]:
+            return False
+    return True
+
 
 def generate_chain(array):
-    current = array[0]
-    mem = []
-    count = 0
-    mem[count].append(current)
-    while True:
-        a = find_nearest_neighbor(current, array, [current])[0]
-        if a in mem[count]:
-            current = find_nearest_neighbor(current, array, [mem])[0]
-            count += 1
-            mem[count].append(current)
-        else:
-            mem[0].append(a)
+    chains = []
+    print(len(array))
+    for i in range(25):
+        current = array[i]
+        chain = []
+        boo = True
+        while boo:
+            a = find_nearest_neighbor(current, array, [current])[0]
+            if x_is_not_in_y(a,chain):
+                chain.append(a)
+            else:
+                boo = False
             current = a
+        print("d",chain)
+        chains.append(chain)
+    return chains
 
 def goth_rough_everything(array, centers):
-    mem = []
-    current = array[0]
-    segments = []
-    while True:
-        nearest = find_nearest_neighbor(current, array, [])
-        #if nearest == the_point_before:
-        #    current
+    return [generate_chain()]
         
 
                 
 
-    
 g = generate_chain(x_y)
+print(g)
 for i in g:
-    if len(i) > 1: 
+    if len(i) >= 1: 
         k = list(zip(*i))
         plt.plot(k[0], k[1])
 

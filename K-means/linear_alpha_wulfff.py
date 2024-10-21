@@ -38,7 +38,7 @@ def biggest_growth_sub(l: list[int]):
     return value
 
 def abstand_berechnen(punkte):
-        return math.sqrt((punkte[0][0]-punkte[1][0])**2+(punkte[0][1]-punkte[1][1])**2)
+    return math.sqrt((punkte[0][0]-punkte[1][0])**2+(punkte[0][1]-punkte[1][1])**2)
 def not_in_ABERAUFCRACK(l, e):
     for i in l:
         if i[0] == e[0] and i[1] == e[1]:
